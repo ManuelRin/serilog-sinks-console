@@ -20,26 +20,26 @@ using Serilog.Parsing;
 using Serilog.Sinks.SystemConsole.Formatting;
 using Serilog.Sinks.SystemConsole.Themes;
 
-namespace Serilog.Sinks.SystemConsole.Rendering;
-
-class ThemedMessageTemplateRenderer
+namespace Serilog.Sinks.SystemConsole.Rendering
 {
-    readonly ConsoleTheme _theme;
-    readonly ThemedValueFormatter _valueFormatter;
-    readonly bool _isLiteral;
-    static readonly ConsoleTheme NoTheme = new EmptyConsoleTheme();
-    readonly ThemedValueFormatter _unthemedValueFormatter;
-
-    public ThemedMessageTemplateRenderer(ConsoleTheme theme, ThemedValueFormatter valueFormatter, bool isLiteral)
+    class ThemedMessageTemplateRenderer
     {
+        readonly ConsoleTheme _theme;
+        readonly ThemedValueFormatter _valueFormatter;
+        readonly bool _isLiteral;
+        static readonly ConsoleTheme NoTheme = new EmptyConsoleTheme();
+        readonly ThemedValueFormatter _unthemedValueFormatter;
+
+        public ThemedMessageTemplateRenderer(ConsoleTheme theme, ThemedValueFormatter valueFormatter, bool isLiteral)
+        {
             _theme = theme ?? throw new ArgumentNullException(nameof(theme));
             _valueFormatter = valueFormatter;
             _isLiteral = isLiteral;
             _unthemedValueFormatter = valueFormatter.SwitchTheme(NoTheme);
         }
 
-    public int Render(MessageTemplate template, IReadOnlyDictionary<string, LogEventPropertyValue> properties, TextWriter output)
-    {
+        public int Render(MessageTemplate template, IReadOnlyDictionary<string, LogEventPropertyValue> properties, TextWriter output)
+        {
             var count = 0;
             foreach (var token in template.Tokens)
             {
@@ -56,16 +56,16 @@ class ThemedMessageTemplateRenderer
             return count;
         }
 
-    int RenderTextToken(TextToken tt, TextWriter output)
-    {
+        int RenderTextToken(TextToken tt, TextWriter output)
+        {
             var count = 0;
             using (_theme.Apply(output, ConsoleThemeStyle.Text, ref count))
                 output.Write(tt.Text);
             return count;
         }
 
-    int RenderPropertyToken(PropertyToken pt, IReadOnlyDictionary<string, LogEventPropertyValue> properties, TextWriter output)
-    {
+        int RenderPropertyToken(PropertyToken pt, IReadOnlyDictionary<string, LogEventPropertyValue> properties, TextWriter output)
+        {
             if (!properties.TryGetValue(pt.PropertyName, out var propertyValue))
             {
                 var count = 0;
@@ -100,8 +100,8 @@ class ThemedMessageTemplateRenderer
             return invisibleCount;
         }
 
-    int RenderAlignedPropertyTokenUnbuffered(PropertyToken pt, TextWriter output, LogEventPropertyValue propertyValue)
-    {
+        int RenderAlignedPropertyTokenUnbuffered(PropertyToken pt, TextWriter output, LogEventPropertyValue propertyValue)
+        {
             if (pt.Alignment == null) throw new ArgumentException("The PropertyToken should have a non-null Alignment.", nameof(pt));
 
             var valueOutput = new StringWriter();
@@ -124,8 +124,8 @@ class ThemedMessageTemplateRenderer
             return RenderValue(_theme, _valueFormatter, propertyValue, output, pt.Format);
         }
 
-    int RenderValue(ConsoleTheme theme, ThemedValueFormatter valueFormatter, LogEventPropertyValue propertyValue, TextWriter output, string? format)
-    {
+        int RenderValue(ConsoleTheme theme, ThemedValueFormatter valueFormatter, LogEventPropertyValue propertyValue, TextWriter output, string? format)
+        {
             if (_isLiteral && propertyValue is ScalarValue sv && sv.Value is string)
             {
                 var count = 0;
@@ -136,4 +136,5 @@ class ThemedMessageTemplateRenderer
 
             return valueFormatter.Format(propertyValue, output, format, _isLiteral);
         }
+    }
 }

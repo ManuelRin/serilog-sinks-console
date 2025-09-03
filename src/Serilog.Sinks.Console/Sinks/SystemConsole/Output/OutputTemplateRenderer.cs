@@ -21,14 +21,14 @@ using Serilog.Formatting.Display;
 using Serilog.Parsing;
 using Serilog.Sinks.SystemConsole.Themes;
 
-namespace Serilog.Sinks.SystemConsole.Output;
-
-class OutputTemplateRenderer : ITextFormatter
+namespace Serilog.Sinks.SystemConsole.Output
 {
-    readonly OutputTemplateTokenRenderer[] _renderers;
-
-    public OutputTemplateRenderer(ConsoleTheme theme, string outputTemplate, IFormatProvider? formatProvider)
+    class OutputTemplateRenderer : ITextFormatter
     {
+        readonly OutputTemplateTokenRenderer[] _renderers;
+
+        public OutputTemplateRenderer(ConsoleTheme theme, string outputTemplate, IFormatProvider? formatProvider)
+        {
             if (outputTemplate is null) throw new ArgumentNullException(nameof(outputTemplate));
             var template = new MessageTemplateParser().Parse(outputTemplate);
 
@@ -83,12 +83,13 @@ class OutputTemplateRenderer : ITextFormatter
             _renderers = renderers.ToArray();
         }
 
-    public void Format(LogEvent logEvent, TextWriter output)
-    {
+        public void Format(LogEvent logEvent, TextWriter output)
+        {
             if (logEvent is null) throw new ArgumentNullException(nameof(logEvent));
             if (output is null) throw new ArgumentNullException(nameof(output));
 
             foreach (var renderer in _renderers)
                 renderer.Render(logEvent, output);
         }
+    }
 }

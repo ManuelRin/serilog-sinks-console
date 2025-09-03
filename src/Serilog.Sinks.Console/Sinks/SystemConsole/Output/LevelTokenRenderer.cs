@@ -19,31 +19,31 @@ using Serilog.Parsing;
 using Serilog.Sinks.SystemConsole.Rendering;
 using Serilog.Sinks.SystemConsole.Themes;
 
-namespace Serilog.Sinks.SystemConsole.Output;
-
-class LevelTokenRenderer : OutputTemplateTokenRenderer
+namespace Serilog.Sinks.SystemConsole.Output
 {
-    readonly ConsoleTheme _theme;
-    readonly PropertyToken _levelToken;
-
-    static readonly Dictionary<LogEventLevel, ConsoleThemeStyle> Levels = new Dictionary<LogEventLevel, ConsoleThemeStyle>
+    class LevelTokenRenderer : OutputTemplateTokenRenderer
     {
-        { LogEventLevel.Verbose, ConsoleThemeStyle.LevelVerbose },
-        { LogEventLevel.Debug, ConsoleThemeStyle.LevelDebug },
-        { LogEventLevel.Information, ConsoleThemeStyle.LevelInformation },
-        { LogEventLevel.Warning, ConsoleThemeStyle.LevelWarning },
-        { LogEventLevel.Error, ConsoleThemeStyle.LevelError },
-        { LogEventLevel.Fatal, ConsoleThemeStyle.LevelFatal },
-    };
+        readonly ConsoleTheme _theme;
+        readonly PropertyToken _levelToken;
 
-    public LevelTokenRenderer(ConsoleTheme theme, PropertyToken levelToken)
-    {
+        static readonly Dictionary<LogEventLevel, ConsoleThemeStyle> Levels = new Dictionary<LogEventLevel, ConsoleThemeStyle>
+        {
+            { LogEventLevel.Verbose, ConsoleThemeStyle.LevelVerbose },
+            { LogEventLevel.Debug, ConsoleThemeStyle.LevelDebug },
+            { LogEventLevel.Information, ConsoleThemeStyle.LevelInformation },
+            { LogEventLevel.Warning, ConsoleThemeStyle.LevelWarning },
+            { LogEventLevel.Error, ConsoleThemeStyle.LevelError },
+            { LogEventLevel.Fatal, ConsoleThemeStyle.LevelFatal },
+        };
+
+        public LevelTokenRenderer(ConsoleTheme theme, PropertyToken levelToken)
+        {
             _theme = theme;
             _levelToken = levelToken;
         }
 
-    public override void Render(LogEvent logEvent, TextWriter output)
-    {
+        public override void Render(LogEvent logEvent, TextWriter output)
+        {
             var moniker = LevelOutputFormat.GetLevelMoniker(logEvent.Level, _levelToken.Format);
             if (!Levels.TryGetValue(logEvent.Level, out var levelStyle))
                 levelStyle = ConsoleThemeStyle.Invalid;
@@ -52,4 +52,5 @@ class LevelTokenRenderer : OutputTemplateTokenRenderer
             using (_theme.Apply(output, levelStyle, ref _))
                 Padding.Apply(output, moniker, _levelToken.Alignment);
         }
+    }
 }

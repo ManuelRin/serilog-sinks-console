@@ -21,36 +21,36 @@ using System;
 using System.IO;
 using System.Text;
 
-namespace Serilog.Sinks.SystemConsole;
-
-class ConsoleSink : ILogEventSink
+namespace Serilog.Sinks.SystemConsole
 {
-    readonly LogEventLevel? _standardErrorFromLevel;
-    readonly ConsoleTheme _theme;
-    readonly ITextFormatter _formatter;
-    readonly object _syncRoot;
-
-    const int DefaultWriteBufferCapacity = 256;
-
-    static ConsoleSink()
+    class ConsoleSink : ILogEventSink
     {
+        readonly LogEventLevel? _standardErrorFromLevel;
+        readonly ConsoleTheme _theme;
+        readonly ITextFormatter _formatter;
+        readonly object _syncRoot;
+
+        const int DefaultWriteBufferCapacity = 256;
+
+        static ConsoleSink()
+        {
             WindowsConsole.EnableVirtualTerminalProcessing();
         }
 
-    public ConsoleSink(
-        ConsoleTheme theme,
-        ITextFormatter formatter,
-        LogEventLevel? standardErrorFromLevel,
-        object syncRoot)
-    {
+        public ConsoleSink(
+            ConsoleTheme theme,
+            ITextFormatter formatter,
+            LogEventLevel? standardErrorFromLevel,
+            object syncRoot)
+        {
             _standardErrorFromLevel = standardErrorFromLevel;
             _theme = theme ?? throw new ArgumentNullException(nameof(theme));
             _formatter = formatter;
             _syncRoot = syncRoot ?? throw new ArgumentNullException(nameof(syncRoot));
         }
 
-    public void Emit(LogEvent logEvent)
-    {
+        public void Emit(LogEvent logEvent)
+        {
             var output = SelectOutputStream(logEvent.Level);
 
             // ANSI escape codes can be pre-rendered into a buffer; however, if we're on Windows and
@@ -77,11 +77,12 @@ class ConsoleSink : ILogEventSink
             }
         }
 
-    TextWriter SelectOutputStream(LogEventLevel logEventLevel)
-    {
+        TextWriter SelectOutputStream(LogEventLevel logEventLevel)
+        {
             if (_standardErrorFromLevel is null)
                 return Console.Out;
 
             return logEventLevel < _standardErrorFromLevel ? Console.Out : Console.Error;
         }
+    }
 }

@@ -14,20 +14,21 @@
 
 using System;
 
-namespace Serilog.Sinks.SystemConsole.Themes;
-
-/// <summary>
-/// Styling applied using the <see cref="System.ConsoleColor"/> enumeration.
-/// </summary>
-public struct SystemConsoleThemeStyle
+namespace Serilog.Sinks.SystemConsole.Themes
 {
     /// <summary>
-    /// The foreground color to apply.
+    /// Styling applied using the <see cref="System.ConsoleColor"/> enumeration.
     /// </summary>
-    public ConsoleColor? Foreground;
+    public struct SystemConsoleThemeStyle
+    {
+        /// <summary>
+        /// The foreground color to apply.
+        /// </summary>
+        public ConsoleColor? Foreground;
 
-    /// <summary>
-    /// The background color to apply.
-    /// </summary>
-    public ConsoleColor? Background;
+        /// <summary>
+        /// The background color to apply.
+        /// </summary>
+        public ConsoleColor? Background;
+    }
 }

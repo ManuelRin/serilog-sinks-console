@@ -20,16 +20,16 @@ using Serilog.Sinks.SystemConsole.Formatting;
 using Serilog.Sinks.SystemConsole.Rendering;
 using Serilog.Sinks.SystemConsole.Themes;
 
-namespace Serilog.Sinks.SystemConsole.Output;
-
-class MessageTemplateOutputTokenRenderer : OutputTemplateTokenRenderer
+namespace Serilog.Sinks.SystemConsole.Output
 {
-    readonly ConsoleTheme _theme;
-    readonly PropertyToken _token;
-    readonly ThemedMessageTemplateRenderer _renderer;
-
-    public MessageTemplateOutputTokenRenderer(ConsoleTheme theme, PropertyToken token, IFormatProvider? formatProvider)
+    class MessageTemplateOutputTokenRenderer : OutputTemplateTokenRenderer
     {
+        readonly ConsoleTheme _theme;
+        readonly PropertyToken _token;
+        readonly ThemedMessageTemplateRenderer _renderer;
+
+        public MessageTemplateOutputTokenRenderer(ConsoleTheme theme, PropertyToken token, IFormatProvider? formatProvider)
+        {
             _theme = theme ?? throw new ArgumentNullException(nameof(theme));
             _token = token ?? throw new ArgumentNullException(nameof(token));
 
@@ -53,8 +53,8 @@ class MessageTemplateOutputTokenRenderer : OutputTemplateTokenRenderer
             _renderer = new ThemedMessageTemplateRenderer(theme, valueFormatter, isLiteral);
         }
 
-    public override void Render(LogEvent logEvent, TextWriter output)
-    {
+        public override void Render(LogEvent logEvent, TextWriter output)
+        {
             if (_token.Alignment is null || !_theme.CanBuffer)
             {
                 _renderer.Render(logEvent.MessageTemplate, logEvent.Properties, output);
@@ -66,4 +66,5 @@ class MessageTemplateOutputTokenRenderer : OutputTemplateTokenRenderer
             var value = buffer.ToString();
             Padding.Apply(output, value, _token.Alignment.Value.Widen(invisible));
         }
+    }
 }

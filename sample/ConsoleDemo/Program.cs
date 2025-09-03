@@ -3,29 +3,38 @@ using Serilog.Sinks.SystemConsole.Themes;
 using System;
 using System.Threading;
 
-Log.Logger = new LoggerConfiguration()
-    .MinimumLevel.Verbose()
-    .WriteTo.Console(theme: AnsiConsoleTheme.Code)
-    .CreateLogger();
-
-try
+namespace ConsoleDemo
 {
-    Log.Debug("Getting started");
+    public static class Program
+    {
+        public static void Main()
+        {
+            Log.Logger = new LoggerConfiguration()
+                .MinimumLevel.Verbose()
+                .WriteTo.Console(theme: AnsiConsoleTheme.Code)
+                .CreateLogger();
 
-    Log.Information("Hello {Name} from thread {ThreadId}", Environment.GetEnvironmentVariable("USERNAME"), Thread.CurrentThread.ManagedThreadId);
+            try
+            {
+                Log.Debug("Getting started");
 
-    Log.Warning("No coins remain at position {@Position}", new { Lat = 25, Long = 134 });
+                Log.Information("Hello {Name} from thread {ThreadId}", Environment.GetEnvironmentVariable("USERNAME"), Thread.CurrentThread.ManagedThreadId);
 
-    Fail();
-}
-catch (Exception e)
-{
-    Log.Error(e, "Something went wrong");
-}
+                Log.Warning("No coins remain at position {@Position}", new { Lat = 25, Long = 134 });
 
-await Log.CloseAndFlushAsync();
+                Fail();
+            }
+            catch (Exception e)
+            {
+                Log.Error(e, "Something went wrong");
+            }
 
-static void Fail()
-{
-    throw new DivideByZeroException();
+            Log.CloseAndFlush();
+        }
+
+        static void Fail()
+        {
+            throw new DivideByZeroException();
+        }
+    }
 }

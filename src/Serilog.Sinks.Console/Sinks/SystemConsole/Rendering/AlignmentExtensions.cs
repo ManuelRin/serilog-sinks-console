@@ -14,12 +14,13 @@
 
 using Serilog.Parsing;
 
-namespace Serilog.Sinks.SystemConsole.Rendering;
-
-static class AlignmentExtensions
+namespace Serilog.Sinks.SystemConsole.Rendering
 {
-    public static Alignment Widen(this Alignment alignment, int amount)
+    static class AlignmentExtensions
     {
+        public static Alignment Widen(this Alignment alignment, int amount)
+        {
             return new Alignment(alignment.Direction, alignment.Width + amount);
         }
+    }
 }
